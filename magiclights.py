@@ -158,7 +158,7 @@ if __name__ == '__main__':
         print "Unable to open serial connection!"
 
     if os.environ.get("DEBUG") is None:
-        app.run(host=os.environ["HOST"], port=os.environ["PORT"])
+        app.run(host=os.environ["HOST"], port=int(os.environ["PORT"]))
     else:
         app.run(debug=True)
 
