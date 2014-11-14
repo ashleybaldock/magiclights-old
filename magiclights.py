@@ -40,6 +40,7 @@ def send_serial(fixture_id, sequence):
     app.logger.warning("Sending serial data: " + send)
     if ser:
         ser.write(send)
+        app.logger.warning(ser.read(100))
     else:
         app.logger.warning("Serial port unavailable")
 
