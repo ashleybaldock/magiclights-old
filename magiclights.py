@@ -7,7 +7,7 @@ from flask.ext.restful import abort, reqparse, fields, marshal_with, Resource
 from flask.globals import _app_ctx_stack, _request_ctx_stack
 from werkzeug.urls import url_parse
 
-import serial
+import serial, os
 
 # http://stackoverflow.com/questions/19631335/reverting-a-url-in-flask-to-the-endpoint-arguments 
 def route_from(url, method = None):
@@ -65,9 +65,12 @@ fixture_parser.add_argument('sequence_id',
 
 sequences = [
     {"sequence_id": 0, "sequence": [(0,0,0,1000)]}, # Null/off sequence (default)
-    {"sequence_id": 1, "sequence": [(255,255,0,10000),(255,0,0,10000)]},
-    {"sequence_id": 2, "sequence": [(0,255,0,20000),(0,255,128,20000)]},
-    {"sequence_id": 3, "sequence": [(255,0,0,20000),(0,255,0,20000),(0,0,255,20000)]},
+    {"sequence_id": 1, "sequence": [(255,255,0,60000),(255,0,0,60000)]},
+    {"sequence_id": 2, "sequence": [(255,0,0,60000),(255,0,255,60000)]},
+    {"sequence_id": 3, "sequence": [(0,255,0,60000),(0,0,255,60000)]},
+    {"sequence_id": 4, "sequence": [(255,0,0,60000),(0,255,0,60000),(0,0,255,60000)]},
+    {"sequence_id": 5, "sequence": [(0,255,255,60000),(0,255,0,60000),(0,0,255,60000)]},
+    {"sequence_id": 6, "sequence": [(255,255,255,60000),(255,255,0,60000),(0,255,255,60000),(255,0,255,60000)]},
 ]
 
 sequence_fields = {
@@ -148,12 +151,16 @@ def style():
 
 if __name__ == '__main__':
     try:
-        ser = serial.Serial('/dev/tty.usbmodemfa131', 9600, timeout=1)
+        ser = serial.Serial(os.environ["SERIAL"], 9600, timeout=1)
         print "Serial connection open"
     except:
         ser = False
         print "Unable to open serial connection!"
 
-    app.run(debug=True)
+    if os.environ.get("DEBUG") is None:
+        app.run(host=os.environ["HOST"], port=os.environ["PORT"])
+    else:
+        app.run(debug=True)
+
 
 
