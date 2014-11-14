@@ -37,9 +37,11 @@ def send_serial(fixture_id, sequence):
     for s in sequence:
         send += ",%i,%i,%i,%i" % (s[0], s[1], s[2], s[3])
     send += "\n"
-    app.logger.debug(send)
+    app.logger.warning("Sending serial data: " + send)
     if ser:
         ser.write(send)
+    else:
+        app.logger.warning("Serial port unavailable")
 
 app = Flask(__name__, static_url_path="/static/")
 api = restful.Api(app)
