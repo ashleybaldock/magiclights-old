@@ -1,0 +1,24 @@
+body {
+    background-color: #FFF;
+}
+
+.gradient {
+    position: relative;
+    margin: 10px auto;
+    width: 95%;
+    height: 80px;
+    border: 3px solid black;
+    border-radius: 10px;
+    background-image: linear-gradient(
+        to right, 
+        red, 
+        #f06d06, 
+        rgb(255, 255, 0), 
+        green
+    );
+    cursor: pointer;
+}
+
+.gradient span {
+    position: absolute; bottom: 0; right: 10px;
+}

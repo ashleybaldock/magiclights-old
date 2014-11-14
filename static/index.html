@@ -1,0 +1,113 @@
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="style.css" />
+<title>MagicLights</title>
+
+<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+
+<script>
+var testdata = [
+    {
+        "sequence": [
+            [
+                255, 
+                255, 
+                0, 
+                10000
+            ], 
+            [
+                255, 
+                0, 
+                0, 
+                10000
+            ]
+        ], 
+        "uri": "http://localhost:5000/magiclights/api/sequences/1"
+    }, 
+    {
+        "sequence": [
+            [
+                0, 
+                255, 
+                0, 
+                20000
+            ], 
+            [
+                0, 
+                255, 
+                128, 
+                20000
+            ]
+        ], 
+        "uri": "http://localhost:5000/magiclights/api/sequences/2"
+    }
+];
+
+function populate_sequences(data, fixture) {
+    $.each(data, function (index, item) {
+        var total = item["sequence"].reduce(function (prev, cur) {
+            return prev + cur[3];
+        }, 0);
+        var grad_str = item["sequence"].reduce(function (prev, cur, idx) {
+            if (idx === 0) {
+                return [0, prev[1] + ",rgb(" + cur[0] + "," + cur[1] + "," + cur[2] + ")"];
+            } else {
+                var per = prev[0] + Math.round(cur[3] / total * 100);
+                return [per, prev[1] + ",rgb(" + cur[0] + "," + cur[1] + "," + cur[2] + ") "
+                        + per + "%"];
+            }
+        }, [0, "linear-gradient(to right"])[1];
+        grad_str += ",rgb(" + item["sequence"][0][0] + ","
+                            + item["sequence"][0][1] + ","
+                            + item["sequence"][0][2] + ") 100%)"
+        var d = $("<div class='gradient'><span>" + total + "ms</span></div>").css("background-image", grad_str);
+        d.click(function () {
+            fixture["sequence_id"] = item["uri"];
+            $.ajax({
+                url: fixture["uri"],
+                type: "PUT",
+                data: JSON.stringify(fixture),
+                dataType: 'json',
+                contentType: 'application/json; charset=UTF-8',
+                success: function (data) {}
+            });
+        });
+        $("body").append(d);
+    });
+};
+
+// For each item in testdata generate a linear-gradient spec
+// Add up total of all durations
+// Divide each step's duration by total to get %
+// write this into linear-gradient as:
+//  rgb(R, G, B) XX%
+// Create a div (class gradient) for each item inside container (body)
+$(document).ready(function () {
+    $.ajax({
+        url: "/magiclights/api/fixtures",
+        data: {},
+        success: function (data) {
+            var fixture = data[0];
+            $.ajax({
+                url: "/magiclights/api/sequences",
+                data: {},
+                success: function (data) { populate_sequences(data, fixture); }
+            });
+        }
+    });
+});
+</script> 
+
+</head>
+
+<body>
+
+
+</body>
+
+</html>
