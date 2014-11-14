@@ -1,0 +1,4 @@
+magiclights
+===========
+
+Magical lighting control
