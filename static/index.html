@@ -11,43 +11,6 @@
 <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
 
 <script>
-var testdata = [
-    {
-        "sequence": [
-            [
-                255, 
-                255, 
-                0, 
-                10000
-            ], 
-            [
-                255, 
-                0, 
-                0, 
-                10000
-            ]
-        ], 
-        "uri": "http://localhost:5000/magiclights/api/sequences/1"
-    }, 
-    {
-        "sequence": [
-            [
-                0, 
-                255, 
-                0, 
-                20000
-            ], 
-            [
-                0, 
-                255, 
-                128, 
-                20000
-            ]
-        ], 
-        "uri": "http://localhost:5000/magiclights/api/sequences/2"
-    }
-];
-
 function populate_sequences(data, fixture) {
     $.each(data, function (index, item) {
         var total = item["sequence"].reduce(function (prev, cur) {
@@ -77,7 +40,7 @@ function populate_sequences(data, fixture) {
                 success: function (data) {}
             });
         });
-        $("body").append(d);
+        $(".content").append(d);
     });
 };
 
@@ -107,6 +70,12 @@ $(document).ready(function () {
 
 <body>
 
+<div class="menu">
+Menu
+</div>
+
+<div class="content">
+</div>
 
 </body>
 

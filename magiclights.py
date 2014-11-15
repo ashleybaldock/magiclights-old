@@ -74,6 +74,12 @@ sequences = [
     {"sequence_id": 4, "sequence": [(255,0,0,60000),(0,255,0,60000),(0,0,255,60000)]},
     {"sequence_id": 5, "sequence": [(0,255,255,60000),(0,255,0,60000),(0,0,255,60000)]},
     {"sequence_id": 6, "sequence": [(255,255,255,60000),(255,255,0,60000),(0,255,255,60000),(255,0,255,60000)]},
+    {"sequence_id": 7, "sequence": [(255,0,0,1000)]},
+    {"sequence_id": 8, "sequence": [(0,255,0,1000)]},
+    {"sequence_id": 9, "sequence": [(0,0,255,1000)]},
+    {"sequence_id": 10, "sequence": [(255,255,0,1000)]},
+    {"sequence_id": 11, "sequence": [(0,255,255,1000)]},
+    {"sequence_id": 12, "sequence": [(255,0,255,1000)]},
 ]
 
 sequence_fields = {

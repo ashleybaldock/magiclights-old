@@ -1,5 +1,7 @@
 body {
     background-color: #FFF;
+    margin: 0;
+    padding: 0;
 }
 
 .gradient {
@@ -9,16 +11,40 @@ body {
     height: 80px;
     border: 3px solid black;
     border-radius: 10px;
-    background-image: linear-gradient(
-        to right, 
-        red, 
-        #f06d06, 
-        rgb(255, 255, 0), 
-        green
-    );
     cursor: pointer;
 }
 
 .gradient span {
     position: absolute; bottom: 0; right: 10px;
 }
+
+.menu {
+    width: 100%;
+    position: fixed;
+    top: 0px;
+    background-color: #AAA;
+    z-index: 10000;
+    height: 50px;
+}
+
+.content {
+    padding-top: 50px;
+}
+
+@media (max-width: 640px) {
+    .gradient {
+        height: 160px;
+    }
+    .gradient span {
+        font-size: 50px;
+    }
+
+    .menu {
+        height: 100px;
+    }
+
+    .content {
+        padding-top: 100px;
+    }
+}
+
