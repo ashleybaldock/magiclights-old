@@ -65,6 +65,27 @@ fixture_parser.add_argument('sequence_id',
     type=lambda t: route_from(t)[1]["sequence_id"],
     location="json")
 
+colours = [
+    {"colour_id": 0, "rgb": (0,0,0)},
+    {"colour_id": 1, "rgb": (255,0,0)},
+    {"colour_id": 2, "rgb": (0,255,0)},
+    {"colour_id": 3, "rgb": (0,0,255)},
+    {"colour_id": 4, "rgb": (255,255,0)},
+    {"colour_id": 5, "rgb": (0,255,255)},
+    {"colour_id": 6, "rgb": (255,0,255)},
+    {"colour_id": 7, "rgb": (255,255,255)},
+    {"colour_id": 8, "rgb": (128,255,255)},
+    {"colour_id": 9, "rgb": (255,128,255)},
+    {"colour_id": 10, "rgb": (255,255,128)},
+    {"colour_id": 11, "rgb": (128,128,255)},
+    {"colour_id": 12, "rgb": (255,128,128)},
+    {"colour_id": 13, "rgb": (128,255,128)},
+]
+
+colour_fields = {
+    "rgb": fields.Raw,
+    "uri": fields.Url("colour", absolute=True),
+}
 
 sequences = [
     {"sequence_id": 0, "sequence": [(0,0,0,1000)]}, # Null/off sequence (default)
@@ -74,17 +95,55 @@ sequences = [
     {"sequence_id": 4, "sequence": [(255,0,0,60000),(0,255,0,60000),(0,0,255,60000)]},
     {"sequence_id": 5, "sequence": [(0,255,255,60000),(0,255,0,60000),(0,0,255,60000)]},
     {"sequence_id": 6, "sequence": [(255,255,0,60000),(0,255,255,60000),(255,0,255,60000)]},
-    {"sequence_id": 7, "sequence": [(255,0,0,1000)]},
-    {"sequence_id": 8, "sequence": [(0,255,0,1000)]},
-    {"sequence_id": 9, "sequence": [(0,0,255,1000)]},
-    {"sequence_id": 10, "sequence": [(255,255,0,1000)]},
-    {"sequence_id": 11, "sequence": [(0,255,255,1000)]},
-    {"sequence_id": 12, "sequence": [(255,0,255,1000)]},
+    #{"sequence_id": 7, "sequence": [(255,0,0,1000)]},
+    #{"sequence_id": 8, "sequence": [(0,255,0,1000)]},
+    #{"sequence_id": 9, "sequence": [(0,0,255,1000)]},
+    #{"sequence_id": 10, "sequence": [(255,255,0,1000)]},
+    #{"sequence_id": 11, "sequence": [(0,255,255,1000)]},
+    #{"sequence_id": 12, "sequence": [(255,0,255,1000)]},
 ]
 
 sequence_fields = {
     "sequence": fields.Raw,
     "uri": fields.Url("sequence", absolute=True),
+}
+
+multifades = [
+    {"multifade_id": 1, "channels": [   # Null/off sequence (default)
+        {"delay":     0, "sequence": [(0,0,0,1000)]},
+        {"delay":     0, "sequence": [(0,0,0,1000)]},
+        {"delay":     0, "sequence": [(0,0,0,1000)]},
+        {"delay":     0, "sequence": [(0,0,0,1000)]},
+        {"delay":     0, "sequence": [(0,0,0,1000)]},
+        {"delay":     0, "sequence": [(0,0,0,1000)]},
+        {"delay":     0, "sequence": [(0,0,0,1000)]},
+        {"delay":     0, "sequence": [(0,0,0,1000)]},
+        {"delay":     0, "sequence": [(0,0,0,1000)]}]},
+    {"multifade_id": 1, "channels": [
+        {"delay":     0, "sequence": [(255,0,0,5000),(0,0,255,5000)]},
+        {"delay":  2500, "sequence": [(255,0,0,5000),(0,0,255,5000)]},
+        {"delay":  5000, "sequence": [(255,0,0,5000),(0,0,255,5000)]},
+        {"delay":  7500, "sequence": [(255,0,0,5000),(0,0,255,5000)]},
+        {"delay": 10000, "sequence": [(255,0,0,5000),(0,0,255,5000)]},
+        {"delay": 12500, "sequence": [(255,0,0,5000),(0,0,255,5000)]},
+        {"delay": 15000, "sequence": [(255,0,0,5000),(0,0,255,5000)]},
+        {"delay": 17500, "sequence": [(255,0,0,5000),(0,0,255,5000)]},
+        {"delay": 20000, "sequence": [(255,0,0,5000),(0,0,255,5000)]}]},
+    {"multifade_id": 2, "channels": [
+        {"delay":  2500, "sequence": [(255,0,0,5000),(255,255,0,5000)]},
+        {"delay":  5000, "sequence": [(255,0,0,5000),(255,255,0,5000)]},
+        {"delay":  7500, "sequence": [(255,0,0,5000),(255,255,0,5000)]},
+        {"delay":     0, "sequence": [(255,0,0,5000),(255,255,0,5000)]},
+        {"delay":  2500, "sequence": [(255,0,0,5000),(255,255,0,5000)]},
+        {"delay":  5000, "sequence": [(255,0,0,5000),(255,255,0,5000)]},
+        {"delay":  7500, "sequence": [(255,0,0,5000),(255,255,0,5000)]},
+        {"delay":     0, "sequence": [(255,0,0,5000),(255,255,0,5000)]},
+        {"delay":  2500, "sequence": [(255,0,0,5000),(255,255,0,5000)]}]},
+]
+
+multifade_fields = {
+    "channels": fields.Raw,
+    "uri": fields.Url("multifade", absolute=True),
 }
 
 class FixtureListAPI(Resource):
@@ -124,6 +183,28 @@ class FixtureAPI(Resource):
     def delete(self, fixture_id):
         pass
 
+class ColourListAPI(Resource):
+    @marshal_with(colour_fields)
+    def get(self):
+        return colours[1:];
+
+    def post(self):
+        pass
+
+class ColourAPI(Resource):
+    @marshal_with(colour_fields)
+    def get(self, colour_id):
+        matches = filter(lambda t: t['colour_id'] == colour_id, colours)
+        if len(matches) == 0:
+            abort(404)
+        return matches[0]
+
+    def put(self, colour_id):
+        pass
+
+    def delete(self, colour_id):
+        pass
+
 class SequenceListAPI(Resource):
     @marshal_with(sequence_fields)
     def get(self):
@@ -146,10 +227,36 @@ class SequenceAPI(Resource):
     def delete(self, sequence_id):
         pass
 
+class MultiFadeListAPI(Resource):
+    @marshal_with(multifade_fields)
+    def get(self):
+        return multifades[1:];
+
+    def post(self):
+        pass
+
+class MultiFadeAPI(Resource):
+    @marshal_with(multifade_fields)
+    def get(self, multifade_id):
+        matches = filter(lambda t: t['multifade_id'] == multifade_id, multifades)
+        if len(matches) == 0:
+            abort(404)
+        return matches[0]
+
+    def put(self, multifade_id):
+        pass
+
+    def delete(self, multifade_id):
+        pass
+
 api.add_resource(FixtureListAPI, '/magiclights/api/fixtures', endpoint = 'fixtures')
 api.add_resource(FixtureAPI, '/magiclights/api/fixtures/<int:fixture_id>', endpoint = 'fixture')
+api.add_resource(ColourListAPI, '/magiclights/api/colours', endpoint = 'colours')
+api.add_resource(ColourAPI, '/magiclights/api/colours/<int:colour_id>', endpoint = 'colour')
 api.add_resource(SequenceListAPI, '/magiclights/api/sequences', endpoint = 'sequences')
 api.add_resource(SequenceAPI, '/magiclights/api/sequences/<int:sequence_id>', endpoint = 'sequence')
+api.add_resource(MultiFadeListAPI, '/magiclights/api/multifades', endpoint = 'multifades')
+api.add_resource(MultiFadeAPI, '/magiclights/api/multifades/<int:multifade_id>', endpoint = 'multifade')
 
 @app.route('/')
 def root():

@@ -2,6 +2,7 @@ body {
     background-color: #FFF;
     margin: 0;
     padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .gradient {
@@ -15,23 +16,90 @@ body {
 }
 
 .gradient span {
-    position: absolute; bottom: 0; right: 10px;
+    position: absolute;
+    bottom: 0;
+    right: 10px;
 }
 
-.menu {
+.multi-gradient {
+    position: relative;
+    margin: 10px auto;
+    width: 95%;
+    height: 180px;
+    border: 3px solid black;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.multi-gradient > div {
+    height: 20px;
+    width: 100%;
+}
+
+.colours {
+    width: 95%;
+    text-align: center;
+    margin: 10px auto;
+}
+.colour {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    margin: 10px;
+    border: 3px solid black;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+#menu {
     width: 100%;
     position: fixed;
     top: 0px;
     background-color: #AAA;
     z-index: 10000;
     height: 50px;
+    display: table;
+}
+
+#menu > ul {
+    display: table-row;
+    width: 100%;
+}
+
+#menu > ul > li {
+    height: 50px;
+    font-size: larger;
+    text-align: center;
+    vertical-align: middle;
+    display: table-cell;
+    width: 1%;
+    cursor: pointer;
+}
+
+#menu > ul > li:hover {
+    background-color: #CCC;
+}
+
+#menu > ul > li.selected {
+    background-color: #CCC;
+}
+
+#menu > ul > li.power {
 }
 
 .content {
     padding-top: 50px;
 }
 
-@media (max-width: 640px) {
+.header {
+    text-align: center;
+    padding-top: 10px;
+}
+
+.fades, .programs, .colours {
+}
+
+@media (max-width: 600px) {
     .gradient {
         height: 160px;
     }
@@ -39,7 +107,7 @@ body {
         font-size: 50px;
     }
 
-    .menu {
+    #menu {
         height: 100px;
     }
 

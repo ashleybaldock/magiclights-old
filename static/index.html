@@ -11,6 +11,14 @@
 <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
 
 <script>
+function populate_colours(data, fixture) {
+    $.each(data, function (index, item) {
+        var colour = "rgb(" + item["rgb"][0] + "," + item["rgb"][1] + "," + item["rgb"][2] + ")";
+        var d = $("<div class='colour'></div>").css("background-color", colour);
+        $(".colours").append(d);
+    });
+};
+
 function populate_sequences(data, fixture) {
     $.each(data, function (index, item) {
         var total = item["sequence"].reduce(function (prev, cur) {
@@ -40,7 +48,74 @@ function populate_sequences(data, fixture) {
                 success: function (data) {}
             });
         });
-        $(".content").append(d);
+        $(".fades").append(d);
+    });
+};
+function populate_multifades(data, fixture) {
+    $.each(data, function (index, item) {
+        // 9 channels of fading
+        // Plus initial delay for each one (offset for start)
+        // Show one full run through for each channel
+
+        // Find maximum sequence length (including delay)
+        var max_len = item["channels"].reduce(function (prev, cur) {
+            var total = cur["delay"] //+ cur["sequence"][cur["sequence"].length - 1][3]
+                + cur["sequence"].reduce(function (prev, cur) {
+                    return prev + cur[3];
+                }, 0);
+            return Math.max(prev, total);
+        }, 0);
+
+        var d = $("<div class='multi-gradient'></div>");
+        // For each item produce a gradient spec
+        $.each(item["channels"], function (index, item) {
+            var total = item["delay"] + item["sequence"].reduce(function (prev, cur) {
+                return prev + cur[3];
+            }, 0);
+
+
+            var grad_str = "linear-gradient(to right";
+            var start = 0;
+            // Black at start up to delay % width
+            grad_str += ",rgb(0,0,0)";
+            if (item["delay"] > 0) {
+                start = item["delay"] / max_len * 100;
+                grad_str += ",rgb(0,0,0) " + start + "%";
+            }
+
+            // Then the gradient
+
+            var processed = item["sequence"].reduce(function (prev, cur, idx) {
+                if (idx === 0) {
+                    return [prev[0], prev[1] + ",rgb(" + cur[0] + "," + cur[1] + "," + cur[2] + ") " + prev[0] + "%"];
+                } else {
+                    var per = prev[0] + Math.round(cur[3] / max_len * 100);
+                    return [per, prev[1] + ",rgb(" + cur[0] + "," + cur[1] + "," + cur[2] + ") "
+                            + per + "%"];
+                }
+            }, [start, ""]);
+
+            grad_str += processed[1];
+            start = processed[0];
+
+            var total_per = total / max_len * 100;
+
+            grad_str += ",rgb(" + item["sequence"][0][0] + ","
+                                + item["sequence"][0][1] + ","
+                                + item["sequence"][0][2] + ") " + total_per + "%"
+
+            // Then black at end to max_len total
+            if (total < max_len) {
+                grad_str += ",rgb(0,0,0) " + total_per + "%";
+                grad_str += ",rgb(0,0,0) 100%";
+            }
+
+            grad_str += ")";
+
+            var i = $("<div></div>").css("background-image", grad_str);
+            d.append(i);
+        });
+        $(".multifades").append(d);
     });
 };
 
@@ -61,6 +136,16 @@ $(document).ready(function () {
                 data: {},
                 success: function (data) { populate_sequences(data, fixture); }
             });
+            $.ajax({
+                url: "/magiclights/api/multifades",
+                data: {},
+                success: function (data) { populate_multifades(data, fixture); }
+            });
+            $.ajax({
+                url: "/magiclights/api/colours",
+                data: {},
+                success: function (data) { populate_colours(data, fixture); }
+            });
         }
     });
 });
@@ -70,11 +155,28 @@ $(document).ready(function () {
 
 <body>
 
-<div class="menu">
-Menu
+<div id="menu">
+    <ul>
+        <li class="selected"> Light Bar </li>
+        <li> 9-Segment </li>
+        <li> Lamp </li>
+        <li class="power">Power</li>
+    </ul>
 </div>
 
 <div class="content">
+    <div class="header"> MultiFades </div>
+    <div class="multifades">
+    </div>
+    <div class="header"> Fades </div>
+    <div class="fades">
+    </div>
+    <div class="header"> Programs </div>
+    <div class="programs">
+    </div>
+    <div class="header"> Colours </div>
+    <div class="colours">
+    </div>
 </div>
 
 </body>
