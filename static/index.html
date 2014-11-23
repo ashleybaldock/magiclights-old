@@ -15,6 +15,16 @@ function populate_colours(data, fixture) {
     $.each(data, function (index, item) {
         var colour = "rgb(" + item["rgb"][0] + "," + item["rgb"][1] + "," + item["rgb"][2] + ")";
         var d = $("<div class='colour'></div>").css("background-color", colour);
+        d.click(function () {
+            $.ajax({
+                url: fixture["uri"],
+                type: "PUT",
+                data: JSON.stringify({"colour_id": item["uri"]}),
+                dataType: 'json',
+                contentType: 'application/json; charset=UTF-8',
+                success: function (data) {}
+            });
+        });
         $(".colours").append(d);
     });
 };
@@ -38,11 +48,10 @@ function populate_sequences(data, fixture) {
                             + item["sequence"][0][2] + ") 100%)"
         var d = $("<div class='gradient'><span>" + total + "ms</span></div>").css("background-image", grad_str);
         d.click(function () {
-            fixture["sequence_id"] = item["uri"];
             $.ajax({
                 url: fixture["uri"],
                 type: "PUT",
-                data: JSON.stringify(fixture),
+                data: JSON.stringify({"sequence_id": item["uri"]}),
                 dataType: 'json',
                 contentType: 'application/json; charset=UTF-8',
                 success: function (data) {}
@@ -115,6 +124,16 @@ function populate_multifades(data, fixture) {
             var i = $("<div></div>").css("background-image", grad_str);
             d.append(i);
         });
+        d.click(function () {
+            $.ajax({
+                url: fixture["uri"],
+                type: "PUT",
+                data: JSON.stringify({"multifade_id": item["uri"]}),
+                dataType: 'json',
+                contentType: 'application/json; charset=UTF-8',
+                success: function (data) {}
+            });
+        });
         $(".multifades").append(d);
     });
 };
@@ -126,6 +145,29 @@ function populate_multifades(data, fixture) {
 //  rgb(R, G, B) XX%
 // Create a div (class gradient) for each item inside container (body)
 $(document).ready(function () {
+    // Wire functions to menu
+    $("#power").click(function () {
+        $.ajax({
+            url: "/magiclights/api/powertoggle",
+            type: "POST",
+            data: "",
+            dataType: 'json',
+            contentType: 'application/json; charset=UTF-8',
+            success: function (data) {}
+        });
+    });
+    $("#lamptoggle").click(function () {
+        $.ajax({
+            url: "/magiclights/api/lamptoggle",
+            type: "POST",
+            data: "",
+            dataType: 'json',
+            contentType: 'application/json; charset=UTF-8',
+            success: function (data) {}
+        });
+    });
+
+    // Get and populate 
     $.ajax({
         url: "/magiclights/api/fixtures",
         data: {},
@@ -159,8 +201,8 @@ $(document).ready(function () {
     <ul>
         <li class="selected"> Light Bar </li>
         <li> 9-Segment </li>
-        <li> Lamp </li>
-        <li class="power">Power</li>
+        <li id="lamptoggle"> Lamp </li>
+        <li id="power">Power</li>
     </ul>
 </div>
 

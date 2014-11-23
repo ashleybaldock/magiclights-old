@@ -59,8 +59,13 @@ def send_serial_multifade(fixture_id, channels):
             send += ",%i,%i,%i,%i" % (s[0], s[1], s[2], s[3])
     send_serial(send)
 
-def send_serial_lamp():
+def send_serial_power():
     send = "0,4"
+    send_serial(send)
+
+def send_serial_lamptoggle():
+    send = "0,4"
+    send_serial(send)
 
 app = Flask(__name__, static_url_path="/static/")
 api = restful.Api(app)
@@ -84,19 +89,15 @@ fixture_fields = {
 fixture_parser = reqparse.RequestParser()
 fixture_parser.add_argument("name", type=str, location="json")
 fixture_parser.add_argument("colour_id", 
-    # TODO validate that this colour ID exists
     type=lambda t: route_from(t)[1]["colour_id"],
     location="json")
 fixture_parser.add_argument("sequence_id", 
-    # TODO validate that this sequence ID exists
     type=lambda t: route_from(t)[1]["sequence_id"],
     location="json")
 fixture_parser.add_argument("multifade_id", 
-    # TODO validate that this multifade ID exists
     type=lambda t: route_from(t)[1]["multifade_id"],
     location="json")
 #fixture_parser.add_argument("program_id", 
-#    # TODO validate that this program ID exists
 #    type=lambda t: route_from(t)[1]["program_id"],
 #    default=0,
 #    location="json")
@@ -192,6 +193,14 @@ multifade_fields = {
     "uri": fields.Url("multifade", absolute=True),
 }
 
+class LampToggleAPI(Resource):
+    def post(self):
+        send_serial_lamptoggle()
+
+class PowerToggleAPI(Resource):
+    def post(self):
+        send_serial_powertoggle()
+
 class FixtureListAPI(Resource):
     @marshal_with(fixture_fields)
     def get(self):
@@ -220,23 +229,20 @@ class FixtureAPI(Resource):
         if "name" in parsed_args:
             fixture["name"] = parsed_args["name"]
 
-        # Request should specify one of colour_id, sequence_id, multifade_id, program_id
-        # Whichever one is specified becomes the new program for this fixture
-        # Check if fixture supports multifade, if not and multifade_id set then error
-        # Set all ID values to zero except the one specified
-        # Trigger corresponding serial send sequence
         if "colour_id" in parsed_args and parsed_args["colour_id"] is not None:
             matches = filter(lambda t: t["colour_id"] == parsed_args["colour_id"], colours)
             if len(matches) == 0:
                 abort(400, message="colour_id '%i' not found" % (parsed_args["colour_id"]))
             fixture["colour_id"] = parsed_args["colour_id"]
             send_serial_colour(fixture_id, matches[0]["rgb"])
+
         if "sequence_id" in parsed_args and parsed_args["sequence_id"] is not None:
             matches = filter(lambda t: t["sequence_id"] == parsed_args["sequence_id"], sequences)
             if len(matches) == 0:
                 abort(400, message="sequence_id '%i' not found" % (parsed_args["sequence_id"]))
             fixture["sequence_id"] = parsed_args["sequence_id"]
             send_serial_sequence(fixture_id, matches[0]["sequence"])
+
         if "multifade_id" in parsed_args and parsed_args["multifade_id"] is not None:
             if not fixture["multifade_capable"]:
                 abort(400, message="multifade_id set but fixture with id: %i is not multifade capable" % (fixture["fixture_id"]))
@@ -245,13 +251,12 @@ class FixtureAPI(Resource):
                 abort(400, message="multifade_id '%i' not found" % (parsed_args["multifade_id"]))
             fixture["multifade_id"] = parsed_args["multifade_id"]
             send_serial_multifade(fixture_id, matches[0]["channels"])
+
         #if "program_id" in parsed_args:
         #    # TODO - check valid program id
         #    fixture["program_id"] = parsed_args["program_id"]
 
         app.logger.warning(fixtures)
-        # TODO should trigger serial module to send command with new sequence
-        #      (not if only changing the name however)
         return fixture, 201
 
     def delete(self, fixture_id):
@@ -323,14 +328,16 @@ class MultiFadeAPI(Resource):
     def delete(self, multifade_id):
         pass
 
-api.add_resource(FixtureListAPI, "/magiclights/api/fixtures", endpoint = "fixtures")
-api.add_resource(FixtureAPI, "/magiclights/api/fixtures/<int:fixture_id>", endpoint = "fixture")
-api.add_resource(ColourListAPI, "/magiclights/api/colours", endpoint = "colours")
-api.add_resource(ColourAPI, "/magiclights/api/colours/<int:colour_id>", endpoint = "colour")
-api.add_resource(SequenceListAPI, "/magiclights/api/sequences", endpoint = "sequences")
-api.add_resource(SequenceAPI, "/magiclights/api/sequences/<int:sequence_id>", endpoint = "sequence")
-api.add_resource(MultiFadeListAPI, "/magiclights/api/multifades", endpoint = "multifades")
-api.add_resource(MultiFadeAPI, "/magiclights/api/multifades/<int:multifade_id>", endpoint = "multifade")
+api.add_resource(FixtureListAPI, "/magiclights/api/fixtures", endpoint="fixtures")
+api.add_resource(FixtureAPI, "/magiclights/api/fixtures/<int:fixture_id>", endpoint="fixture")
+api.add_resource(ColourListAPI, "/magiclights/api/colours", endpoint="colours")
+api.add_resource(ColourAPI, "/magiclights/api/colours/<int:colour_id>", endpoint="colour")
+api.add_resource(SequenceListAPI, "/magiclights/api/sequences", endpoint="sequences")
+api.add_resource(SequenceAPI, "/magiclights/api/sequences/<int:sequence_id>", endpoint="sequence")
+api.add_resource(MultiFadeListAPI, "/magiclights/api/multifades", endpoint="multifades")
+api.add_resource(MultiFadeAPI, "/magiclights/api/multifades/<int:multifade_id>", endpoint="multifade")
+api.add_resource(LampToggleAPI, "/magiclights/api/lamptoggle", endpoint="lamptoggle")
+api.add_resource(PowerToggleAPI, "/magiclights/api/powertoggle", endpoint="powertoggle")
 
 @app.route("/")
 def root():
