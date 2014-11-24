@@ -54,7 +54,7 @@ def send_serial_sequence(fixture_id, sequence):
 def send_serial_multifade(fixture_id, channels):
     send = "%i,3,%i" % (fixture_id, len(channels))
     for c in channels:
-        send += ",%i" % (c["delay"])
+        send += ",%i,%i" % (c["delay"], len(c["sequence"]))
         for s in c["sequence"]:
             send += ",%i,%i,%i,%i" % (s[0], s[1], s[2], s[3])
     send_serial(send)
