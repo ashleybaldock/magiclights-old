@@ -34,12 +34,12 @@ def route_from(url, method = None):
 
 def send_serial(send):
     send += "\n"
-    app.logger.warning("Sending serial data: " + send)
+    print "Sending serial data: " + send
     if ser:
         ser.write(send)
-        app.logger.warning(ser.read(300))
+        print ser.read(300)
     else:
-        app.logger.warning("Serial port unavailable")
+        print "Serial port unavailable"
 
 def send_serial_colour(fixture_id, colour):
     send = "%i,1,%i,%i,%i" % (fixture_id, colour[0], colour[1], colour[2])
