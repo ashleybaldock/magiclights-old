@@ -37,7 +37,7 @@ def send_serial(send):
     print "Sending serial data: " + send
     if ser:
         ser.write(send)
-        print ser.read(300)
+        print ser.read(2000)
     else:
         print "Serial port unavailable"
 
