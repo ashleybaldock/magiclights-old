@@ -59,8 +59,10 @@ def send_serial_multifade(fixture_id, channels):
             send += ",%i,%i,%i,%i" % (s[0], s[1], s[2], s[3])
     send_serial(send)
 
-def send_serial_power():
-    send = "0,4"
+def send_serial_powertoggle():
+    send = "1,1,0,0,0"
+    send_serial(send)
+    send = "2,1,0,0,0"
     send_serial(send)
 
 def send_serial_lamptoggle():
