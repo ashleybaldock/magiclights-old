@@ -138,6 +138,60 @@ function populate_multifades(data, fixture) {
     });
 };
 
+function populate_all(include_multifades, fixture_index) {
+    $.ajax({
+        url: "/magiclights/api/fixtures",
+        data: {},
+        success: function (data) {
+            var fixture = data[fixture_index];
+            if (include_multifades) {
+                $.ajax({
+                    url: "/magiclights/api/multifades",
+                    data: {},
+                    success: function (data) { populate_multifades(data, fixture); }
+                });
+            }
+            $.ajax({
+                url: "/magiclights/api/sequences",
+                data: {},
+                success: function (data) { populate_sequences(data, fixture); }
+            });
+            $.ajax({
+                url: "/magiclights/api/colours",
+                data: {},
+                success: function (data) { populate_colours(data, fixture); }
+            });
+        }
+    });
+};
+
+function remove_all() {
+    $(".multifades").empty();
+    $(".fades").empty();
+    $(".programs").empty();
+    $(".colours").empty();
+};
+
+function hide_multifades() {
+    $("#multifades_header").hide();
+};
+
+function show_multifades() {
+    $("#multifades_header").show();
+};
+
+function select_lightbar() {
+    $("#ninesegment").removeClass("selected");
+    $("#lightbar").removeClass("selected");
+    $("#lightbar").addClass("selected");
+};
+
+function select_ninesegment() {
+    $("#ninesegment").removeClass("selected");
+    $("#lightbar").removeClass("selected");
+    $("#ninesegment").addClass("selected");
+};
+
 // For each item in testdata generate a linear-gradient spec
 // Add up total of all durations
 // Divide each step's duration by total to get %
@@ -166,30 +220,23 @@ $(document).ready(function () {
             success: function (data) {}
         });
     });
+    $("#lightbar").click(function () {
+        select_lightbar();
+        remove_all();
+        hide_multifades();
+        populate_all(false, 0);
+    });
+    $("#ninesegment").click(function () {
+        select_ninesegment();
+        // Remove all sequences and reload from server
+        remove_all();
+        show_multifades();
+        populate_all(true, 1);
+    });
 
     // Get and populate 
-    $.ajax({
-        url: "/magiclights/api/fixtures",
-        data: {},
-        success: function (data) {
-            var fixture = data[0];
-            $.ajax({
-                url: "/magiclights/api/sequences",
-                data: {},
-                success: function (data) { populate_sequences(data, fixture); }
-            });
-            $.ajax({
-                url: "/magiclights/api/multifades",
-                data: {},
-                success: function (data) { populate_multifades(data, fixture); }
-            });
-            $.ajax({
-                url: "/magiclights/api/colours",
-                data: {},
-                success: function (data) { populate_colours(data, fixture); }
-            });
-        }
-    });
+    hide_multifades();
+    populate_all(false, 0);
 });
 </script> 
 
@@ -199,15 +246,15 @@ $(document).ready(function () {
 
 <div id="menu">
     <ul>
-        <li class="selected"> Light Bar </li>
-        <li> 9-Segment </li>
+        <li id="lightbar" class="selected"> Light Bar </li>
+        <li id="ninesegment"> 9-Segment </li>
         <li id="lamptoggle"> Lamp </li>
         <li id="power">Power</li>
     </ul>
 </div>
 
 <div class="content">
-    <div class="header"> MultiFades </div>
+    <div id="multifades_header" class="header"> MultiFades </div>
     <div class="multifades">
     </div>
     <div class="header"> Fades </div>
