@@ -105,20 +105,51 @@ fixture_parser.add_argument("multifade_id",
 #    location="json")
 
 colours = [
-    {"colour_id": 0, "rgb": (0,0,0)},
-    {"colour_id": 1, "rgb": (255,0,0)},
-    {"colour_id": 2, "rgb": (0,255,0)},
-    {"colour_id": 3, "rgb": (0,0,255)},
-    {"colour_id": 4, "rgb": (255,255,0)},
-    {"colour_id": 5, "rgb": (0,255,255)},
-    {"colour_id": 6, "rgb": (255,0,255)},
-    {"colour_id": 7, "rgb": (255,255,255)},
-    {"colour_id": 8, "rgb": (128,255,255)},
-    {"colour_id": 9, "rgb": (255,128,255)},
-    {"colour_id": 10, "rgb": (255,255,128)},
-    {"colour_id": 11, "rgb": (128,128,255)},
-    {"colour_id": 12, "rgb": (255,128,128)},
-    {"colour_id": 13, "rgb": (128,255,128)},
+    {"colour_id":  0, "rgb": (0,0,0)},
+
+    {"colour_id":  1, "rgb": (255,0,0)},
+    {"colour_id":  1, "rgb": (255,64,0)},
+    {"colour_id":  2, "rgb": (255,128,0)},
+    {"colour_id":  2, "rgb": (255,192,0)},
+    {"colour_id":  3, "rgb": (255,0,64)},
+    {"colour_id":  3, "rgb": (255,0,128)},
+    {"colour_id":  3, "rgb": (255,0,192)},
+    {"colour_id":  4, "rgb": (255,128,128)},
+
+    {"colour_id":  5, "rgb": (0,  255,  0)},
+    {"colour_id":  5, "rgb": (64, 255,  0)},
+    {"colour_id":  6, "rgb": (128,255,  0)},
+    {"colour_id":  6, "rgb": (192,255,  0)},
+    {"colour_id": 13, "rgb": (255,255,  0)},
+    {"colour_id":  7, "rgb": (0,  255, 64)},
+    {"colour_id":  7, "rgb": (0,  255,128)},
+    {"colour_id":  7, "rgb": (0,  255,192)},
+    {"colour_id":  8, "rgb": (128,255,128)},
+    {"colour_id": 14, "rgb": (255,255,128)},
+
+    {"colour_id":  9, "rgb": (0,    0,255)},
+    {"colour_id": 10, "rgb": (64,   0,255)},
+    {"colour_id": 10, "rgb": (128,  0,255)},
+    {"colour_id": 10, "rgb": (192,  0,255)},
+    {"colour_id": 17, "rgb": (255,  0,255)},
+    {"colour_id": 11, "rgb": (0,   64,255)},
+    {"colour_id": 11, "rgb": (0,  128,255)},
+    {"colour_id": 11, "rgb": (0,  192,255)},
+    {"colour_id": 15, "rgb": (0,  255,255)},
+    {"colour_id": 16, "rgb": (128,255,255)},
+
+    {"colour_id": 12, "rgb": (128,128,255)},
+    {"colour_id": 18, "rgb": (255,128,255)},
+
+
+    {"colour_id": 19, "rgb": (255,255,255)},
+    {"colour_id": 19, "rgb": (255,147,41), "label": "1900K Candle"},
+    {"colour_id": 19, "rgb": (255,197,143), "label": "2600K 40W Tungsten"},
+    {"colour_id": 19, "rgb": (255,214,170), "label": "2850K 100W Tungsten"},
+    {"colour_id": 19, "rgb": (255,241,224), "label": "3200K Halogen"},
+    {"colour_id": 19, "rgb": (255,255,251), "label": "5400K High Noon Sun"},
+    {"colour_id": 19, "rgb": (201,226,255), "label": "7000K Overcast Sky"},
+    {"colour_id": 19, "rgb": (64,156,255), "label": "20000K Clear Blue Sky"},
 ]
 
 colour_fields = {
@@ -128,12 +159,29 @@ colour_fields = {
 
 sequences = [
     {"sequence_id": 0, "sequence": [(0,0,0,1000)]}, # Null/off sequence (default)
-    {"sequence_id": 1, "sequence": [(255,255,0,60000),(255,0,0,60000)]},
-    {"sequence_id": 2, "sequence": [(255,0,0,60000),(255,0,255,60000)]},
-    {"sequence_id": 3, "sequence": [(0,255,0,60000),(0,0,255,60000)]},
-    {"sequence_id": 4, "sequence": [(255,0,0,60000),(0,255,0,60000),(0,0,255,60000)]},
-    {"sequence_id": 5, "sequence": [(0,255,255,60000),(0,255,0,60000),(0,0,255,60000)]},
-    {"sequence_id": 6, "sequence": [(255,255,0,60000),(0,255,255,60000),(255,0,255,60000)]},
+    {"sequence_id": 1, "sequence": [(255,0,0,60000),(0,255,0,60000)]},
+    {"sequence_id": 2, "sequence": [(255,0,0,60000),(0,0,255,60000)]},
+    {"sequence_id": 3, "sequence": [(255,0,0,60000),(255,255,0,60000)]},
+    {"sequence_id": 4, "sequence": [(255,0,0,60000),(0,255,255,60000)]},
+    {"sequence_id": 5, "sequence": [(255,0,0,60000),(255,0,255,60000)]},
+
+    {"sequence_id": 6, "sequence": [(0,255,0,60000),(0,0,255,60000)]},
+    {"sequence_id": 7, "sequence": [(0,255,0,60000),(255,255,0,60000)]},
+    {"sequence_id": 8, "sequence": [(0,255,0,60000),(0,255,255,60000)]},
+    {"sequence_id": 9, "sequence": [(0,255,0,60000),(255,0,255,60000)]},
+
+    {"sequence_id": 10, "sequence": [(0,0,255,60000),(255,255,0,60000)]},
+    {"sequence_id": 11, "sequence": [(0,0,255,60000),(0,255,255,60000)]},
+    {"sequence_id": 12, "sequence": [(0,0,255,60000),(255,0,255,60000)]},
+
+    {"sequence_id": 13, "sequence": [(255,255,0,60000),(0,255,255,60000)]},
+    {"sequence_id": 14, "sequence": [(255,255,0,60000),(255,0,255,60000)]},
+
+    {"sequence_id": 15, "sequence": [(0,255,255,60000),(255,0,255,60000)]},
+
+    {"sequence_id": 16, "sequence": [(255,0,0,60000),(0,255,0,60000),(0,0,255,60000)]},
+    {"sequence_id": 17, "sequence": [(0,255,255,60000),(0,255,0,60000),(0,0,255,60000)]},
+    {"sequence_id": 18, "sequence": [(255,255,0,60000),(0,255,255,60000),(255,0,255,60000)]},
     #{"sequence_id": 7, "sequence": [(255,0,0,1000)]},
     #{"sequence_id": 8, "sequence": [(0,255,0,1000)]},
     #{"sequence_id": 9, "sequence": [(0,0,255,1000)]},
@@ -267,7 +315,7 @@ class FixtureAPI(Resource):
 class ColourListAPI(Resource):
     @marshal_with(colour_fields)
     def get(self):
-        return colours[1:];
+        return colours;
 
     def post(self):
         pass
@@ -350,7 +398,7 @@ def style():
 
 if __name__ == "__main__":
     try:
-        ser = serial.Serial(os.environ["SERIAL"], 9600, timeout=1)
+        ser = serial.Serial(os.environ["SERIAL"], 2400, timeout=1)
         print "Serial connection open"
     except:
         ser = False
