@@ -7,7 +7,13 @@ from flask.ext.restful import abort, reqparse, fields, marshal_with, Resource
 from flask.globals import _app_ctx_stack, _request_ctx_stack
 from werkzeug.urls import url_parse
 
-import serial, os
+import serial, os, time, threading, sys
+
+def read_from_port(ser):
+    while True:
+        time.sleep(0.1)
+        if ser.inWaiting():
+            sys.stdout.write(ser.readline())
 
 # http://stackoverflow.com/questions/19631335/reverting-a-url-in-flask-to-the-endpoint-arguments 
 def route_from(url, method = None):
@@ -34,10 +40,20 @@ def route_from(url, method = None):
 
 def send_serial(send):
     send += "\n"
-    print "Sending serial data: " + send
     if ser:
-        ser.write(send)
-        print ser.read(2000)
+        # Chunk data into <32 character chunks + wait between sending each
+        if len(send) < 32:
+            print "Sending serial data: " + send
+            ser.write(send)
+        else:
+
+            x = len(send)
+            n = 0
+            while (n < x):
+                print "Sending serial data: " + send[n:n+32]
+                ser.write(send[n:n+32])
+                n += 32
+                time.sleep(0.2)
     else:
         print "Serial port unavailable"
 
@@ -195,7 +211,7 @@ sequence_fields = {
 }
 
 multifades = [
-    {"multifade_id": 1, "channels": [   # Null/off sequence (default)
+    {"multifade_id": 0, "channels": [   # Null/off sequence (default)
         {"delay":     0, "sequence": [(0,0,0,1000)]},
         {"delay":     0, "sequence": [(0,0,0,1000)]},
         {"delay":     0, "sequence": [(0,0,0,1000)]},
@@ -405,6 +421,10 @@ if __name__ == "__main__":
     except:
         ser = False
         print "Unable to open serial connection!"
+    if ser:
+        thread = threading.Thread(target=read_from_port, args=(ser,))
+        thread.daemon = True
+        thread.start()
 
     if os.environ.get("DEBUG") is None:
         app.run(host=os.environ["HOST"], port=int(os.environ["PORT"]))
