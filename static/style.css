@@ -96,20 +96,40 @@ body {
 .fades, .programs, .colours {
 }
 
-@media (max-width: 600px) {
+@media only screen 
+and (min-device-width : 320px) 
+and (max-device-width : 568px) {
     .gradient {
         height: 160px;
     }
     .gradient span {
-        font-size: 50px;
+        font-size: 30px;
     }
 
     #menu {
         height: 100px;
     }
 
+    #menu > ul > li {
+        height: 50px;
+        font-size: 40px;
+        text-align: center;
+    }
+
+    #menu > ul > li:hover {
+        background-color: #AAA;
+    }
+
+    #menu > ul > li.selected {
+        background-color: #CCC;
+    }
+
     .content {
         padding-top: 100px;
+    }
+    .colour {
+        width: 140px;
+        height: 140px;
     }
 }
 

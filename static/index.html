@@ -6,6 +6,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="style.css" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>MagicLights</title>
 
 <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
@@ -46,7 +47,7 @@ function populate_sequences(data, fixture) {
         grad_str += ",rgb(" + item["sequence"][0][0] + ","
                             + item["sequence"][0][1] + ","
                             + item["sequence"][0][2] + ") 100%)"
-        var d = $("<div class='gradient'><span>" + total + "ms</span></div>").css("background-image", grad_str);
+        var d = $("<div class='gradient'><span>~" + Math.round(total / 1000) + "s</span></div>").css("background-image", grad_str);
         d.click(function () {
             $.ajax({
                 url: fixture["uri"],
